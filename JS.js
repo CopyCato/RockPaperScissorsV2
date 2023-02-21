@@ -3,11 +3,23 @@ let computerScore = 0;
 let playerSelection ='';
 let computerSelection = '';
 let result = '';
+const buttons = document.querySelectorAll('button');
 
+// function getPlayerChoice(){
+//   let selection = prompt("Please enter Rock, Paper or Scissors");
+//   return selection.toLowerCase();
+// }
 
-function getPlayerChoice(){
-  let selection = prompt("Please enter Rock, Paper or Scissors");
-  return selection.toLowerCase();
+buttons.forEach(button => {
+  button.addEventListener('click', function(){
+    playRound(button.id)
+  })
+})
+
+function disableButtons() {
+  buttons.forEach(elem => {
+      elem.disabled = true
+  })
 }
 
 function getComputerChoice(){
@@ -19,43 +31,37 @@ function getComputerChoice(){
   }else return 'paper';
 }
 
-function playRound(computerSelection, playerSelection){
-  playerSelection = getPlayerChoice();
+function playRound(playerSelection){
   computerSelection = getComputerChoice();
   console.log('Player\'s choice is', playerSelection);
   console.log('Computer\'s choice is', computerSelection);
 
   if(computerSelection === playerSelection){
+    result = ('It\'s a tie. You both chose ' + playerSelection
+            + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore);
     return 'tie';
-  }else if(playerSelection === 'rock' && computerSelection === 'scissors'
+  }
+  else if(playerSelection === 'rock' && computerSelection === 'scissors'
     || playerSelection === 'paper' && computerSelection === 'rock'
     || playerSelection === 'scissors' && computerSelection === 'paper'){
     playerScore++;
-    return 'win';
-  }else if(computerSelection === 'rock' && playerSelection === 'scissors'
-  || computerSelection === 'paper' && playerSelection === 'rock'
-  || computerSelection === 'scissors' && playerSelection === 'paper'){
-    computerScore++;
-    return 'lose';
+    result = ('You win! ' + playerSelection + ' beats ' + computerSelection
+      + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore);
+    if(playerScore === 5){
+      result += '<br><br>You won the game! Reload the page to play again';
+      disableButtons();
+    } 
   }
-}
-
-function game(){
-  for(let i =0; i < 5; i++){
-    result = playRound(computerSelection,playerSelection);
-    if(result == 'tie'){
-      console.log('It\'s a tie game');
-    }else if(result == 'win'){
-      console.log('You win this round');
-    }else{
-      console.log('You lose this round');
+  else {
+    computerScore++;
+    result = ('You lose! ' + computerSelection + ' beats ' + playerSelection
+    + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore);
+    if(computerScore === 5){
+      result += '<br><br>I won the game! Reload the page to play again';
+      disableButtons();
     }
   }
-  if(playerScore > computerScore){
-    console.log('Congrats, you win the game!');
-  }else{
-    console.log('Better luck next time, computer wins!');
-  }
-}
 
-game();
+  document.getElementById('result').innerHTML = result;
+  return
+}
